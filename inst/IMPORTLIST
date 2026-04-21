@@ -1,0 +1,11 @@
+attr = base
+intersect = base
+order = base
+rev = base
+sample = base
+setdiff = base
+summary = base
+tail = utils
+toString = base
+unique = base
+writeLines = base
