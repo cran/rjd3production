@@ -3,12 +3,10 @@
 #| eval: true
 #| echo: false
 
-cond_run_vignette <- rjd3toolkit::get_java_version() >= rjd3toolkit::minimal_java_version
-
 knitr::opts_chunk$set(
     collapse = TRUE,
     echo = TRUE,
-    eval = cond_run_vignette,
+    eval = rjd3jars::check_java_version(silent = TRUE),
     comment = "#>"
 )
 
@@ -36,7 +34,7 @@ library("rjd3production")
 library("rjd3toolkit")
 path_ABS <- system.file("extdata", "ABS.csv", package = "rjd3providers")
 my_data <- ABS[, seq_len(3L)]
-colnames(my_data) <- substr(colnames(my_data), start = 2L, stop = 11L)
+colnames(my_data) <- substr(colnames(my_data), start = 2L, stop = 12L)
 
 
 ## -----------------------------------------------------------------------------
@@ -85,7 +83,7 @@ add_sa_item(jsap = jsap, name = "Seconde série", x = my_data[, 2L], spec = x13_
 #| label: create-ws-from-data
 
 jws <- create_ws_from_data(my_data)
-set_context(jws, create_insee_context(start = c(2015L, 1L)))
+set_context(jws, create_insee_context(s = my_data))
 
 
 ## -----------------------------------------------------------------------------

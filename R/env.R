@@ -34,7 +34,6 @@ init_env <- function(path, open = FALSE) {
     on.exit(expr = {
         setwd(old_path)
     })
-    setwd(path)
 
     dir.create(path, recursive = TRUE)
     usethis::create_project(rstudio = TRUE, path = path, open = open)
@@ -89,6 +88,7 @@ exclusions: list(\"renv\", \"packrat\")
     file.create(file.path(path, ".Renviron"))
     file.create(file.path(path, ".Rprofile"))
 
+    setwd(path)
     usethis::use_description(
         fields = list(
             Imports = "rjd3toolkit, rjd3x13, rjd3providers, rjd3workspace, rjd3production",
@@ -97,7 +97,7 @@ exclusions: list(\"renv\", \"packrat\")
         check_name = FALSE
     )
 
-    system(paste("git -C", normalizePath(path), "init"))
+    system(paste("git -C", normalizePath(path), "init -b main"))
     # usethis::use_git(message = "Nouveau projet de d\U0E9saisonnalisation !")
 
     return(invisible(path))

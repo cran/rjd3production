@@ -469,7 +469,7 @@ rev_set_tradingdays <- function(x) {
 #' code.
 #' `rev_spec()` returns a complete multi-line pipeline.
 #'
-#' @examplesIf rjd3toolkit::get_java_version() >= rjd3toolkit::minimal_java_version
+#' @examplesIf rjd3jars::check_java_version(silent = TRUE)
 #'
 #' spec_init <- rjd3x13::x13_spec("RSA3") |>
 #'     rjd3toolkit::set_basic(type = "All") |>

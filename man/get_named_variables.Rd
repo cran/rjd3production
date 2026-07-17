@@ -16,7 +16,7 @@ a list with all the groups and named variables
 Lists all the variables in a modelling context.
 }
 \examples{
-\dontshow{if (rjd3toolkit::get_java_version() >= rjd3toolkit::minimal_java_version) withAutoprint(\{ # examplesIf}
+\dontshow{if (rjd3jars::check_java_version(silent = TRUE)) withAutoprint(\{ # examplesIf}
 context_FR <- create_insee_context()
 get_named_variables(context_FR)
 \dontshow{\}) # examplesIf}

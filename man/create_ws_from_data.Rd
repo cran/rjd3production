@@ -28,7 +28,7 @@ newly created Seasonal Adjustment Processing (SAP).
 All series share the same specification (\code{spec}).
 }
 \examples{
-\dontshow{if (rjd3toolkit::get_java_version() >= rjd3toolkit::minimal_java_version) withAutoprint(\{ # examplesIf}
+\dontshow{if (rjd3jars::check_java_version(silent = TRUE)) withAutoprint(\{ # examplesIf}
 library("rjd3toolkit")
 
 # Create workspace

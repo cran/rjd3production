@@ -1,7 +1,7 @@
 ---
 title: "Mise en place d'une chaîne de production"
 vignette: >
-  %\VignetteIndexEntry{Production processus}
+  %\VignetteIndexEntry{Production processus (FR)}
   %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 knitr:
@@ -15,12 +15,10 @@ knitr:
 #| eval: true
 #| echo: false
 
-cond_run_vignette <- rjd3toolkit::get_java_version() >= rjd3toolkit::minimal_java_version
-
 knitr::opts_chunk$set(
     collapse = TRUE,
     echo = TRUE,
-    eval = cond_run_vignette,
+    eval = rjd3jars::check_java_version(silent = TRUE),
     comment = "#>"
 )
 ```
@@ -43,6 +41,7 @@ Avant de créer notre chaîne de production, il faut créer notre environnement 
 - un fichier DESCRIPTION pour gérer les dépendances de notre projet
 - un fichier `.lintr` pour faire l'analyse statique du code (bonnes pratiques de formattage)
 - un fichier README.md pour expliquer notre projet
+- une structure de projet Git
 
 ```{r}
 #| echo: true
@@ -65,7 +64,7 @@ Le jeu de données se trouve aussi sous la forme du fichier `ABS.csv` sous `{r} 
 library("rjd3toolkit")
 path_ABS <- system.file("extdata", "ABS.csv", package = "rjd3providers")
 my_data <- ABS[, seq_len(3L)]
-colnames(my_data) <- substr(colnames(my_data), start = 2L, stop = 11L)
+colnames(my_data) <- substr(colnames(my_data), start = 2L, stop = 12L)
 ```
 
 ## Sélection des régresseurs de calendrier
@@ -135,7 +134,7 @@ add_sa_item(jsap = jsap, name = "Seconde série", x = my_data[, 2L], spec = x13_
 #| label: create-ws-from-data
 
 jws <- create_ws_from_data(my_data)
-set_context(jws, create_insee_context(start = c(2015L, 1L)))
+set_context(jws, create_insee_context(s = my_data))
 ```
 
 Si nous en avons, il faut assigner les régresseurs de calendrier à chaque série :
@@ -167,3 +166,10 @@ Enfin, nous pouvons sauvegarder notre workspace !
 path_ws <- file.path(path_project, "Workspaces", "workspace_travail", "my_ws.xml")
 save_workspace(jws, path_ws, replace = TRUE)
 ```
+
+## Appel du cruncher
+
+Dans une chaîne de production en R, le cruncher est très important car il permet de :
+
+1. Mettre à jour les données brutes à partir du fichier de données
+2. Mettre à jour le modèle d'ajustement saisonnier (selon une politique de rafraichissement)

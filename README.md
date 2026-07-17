@@ -96,6 +96,12 @@ de mettre en place une telle configuration dans R est expliquée
 Pour obtenir la version stable actuelle (à partir de la dernière
 version) :
 
+Depuis le CRAN :
+
+``` r
+install.packages("rjd3production")
+```
+
 - Depuis GitHub :
 
 ``` r
@@ -129,7 +135,7 @@ remotes::install_github("InseeFr/rjd3production")
 <!-- library("rjd3production") -->
 
 <!-- ``` -->
-
+## 🇬🇧 README in english
 ### Overview
 
 **{rjd3production}** helps producers of seasonal data to set up
@@ -191,6 +197,12 @@ flowchart LR
 ### Installation
 
 To get the current stable version (from the latest release):
+
+From CRAN:
+
+``` r
+install.packages("rjd3production")
+```
 
 - From GitHub:
 

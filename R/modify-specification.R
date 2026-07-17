@@ -3,7 +3,7 @@
 #' @description
 #' This function scans a JDemetra+ workspace (`.xml`) and removes
 #' regression outliers whose p-values are above a given threshold.
-#' Both the estimation specification and the domain specification are
+#' Both the estimation specification and the reference specification are
 #' updated accordingly, and the workspace file is saved in place.
 #'
 #' Typical use case: after estimation with user pre-specified outliers, outliers with
@@ -15,7 +15,7 @@
 #' @param threshold [\link[base]{numeric}] Maximum p-value for keeping
 #' an outlier. Outliers with `Pr(>|t|) > threshold` are removed.
 #' Default is `0.3`.
-#' @param domain Boolean indicating if the domain specification should be
+#' @param reference Boolean indicating if the reference specification should be
 #' modified.
 #' @param estimation Boolean indicating if the estimation specification should
 #' be modified.
@@ -28,14 +28,14 @@
 #' - identifies outliers in the `regarima` specification,
 #' - checks their p-values in the pre-processing regression summary,
 #' - removes those with p-values above the threshold from both
-#'   `estimationSpec` and, if present, `domainSpec`,
+#'   `estimationSpec` and, if present, `referenceSpec`,
 #' - saves the workspace file.
 #'
 #' @returns
 #' The function invisibly returns `NULL`, but it **modifies the workspace file
 #' in place** (saved at the same location as `ws_path`).
 #'
-#' @examplesIf rjd3toolkit::get_java_version() >= rjd3toolkit::minimal_java_version
+#' @examplesIf rjd3jars::check_java_version(silent = TRUE)
 #'
 #' library("rjd3workspace")
 #' library("rjd3x13")
@@ -49,25 +49,26 @@
 #' save_workspace(jws, file = path_ws)
 #'
 #' # Remove non-significant outliers (p > 0.3) from a workspace
-#' remove_non_significative_outliers(path_ws, threshold = 0.3, domain = TRUE)
+#' remove_non_significant_outliers(path_ws, threshold = 0.3, reference = TRUE)
 #' }
 #'
 #' @importFrom rjd3workspace jws_open jws_compute jws_sap sap_sai_count jsap_sai
 #' @importFrom rjd3workspace read_sai sai_name set_specification
-#' @importFrom rjd3workspace set_domain_specification set_name save_workspace
+#' @importFrom rjd3workspace set_reference_specification set_name save_workspace
 #' @importFrom rjd3toolkit remove_outlier
 #' @importFrom tools file_path_sans_ext
 #' @export
-remove_non_significative_outliers <- function(
+remove_non_significant_outliers <- function(
     ws_path,
     threshold = 0.3,
-    domain = FALSE,
+    reference = FALSE,
     estimation = FALSE,
     verbose = TRUE
 ) {
-    if (!domain && !estimation) {
+    if (!reference && !estimation) {
         warning(
-            "No SA-Items will be modified if neither domainspec nor estimationspec are selected."
+            "No SA-Items will be modified if neither referenceSpec",
+            "nor estimationspec are selected."
         )
         return(invisible(NULL))
     }
@@ -94,11 +95,11 @@ remove_non_significative_outliers <- function(
         sai <- rjd3workspace::read_sai(jsai)
         series_name <- rjd3workspace::sai_name(jsai)
         new_estimationSpec <- estimationSpec <- sai$estimationSpec
-        new_domainSpec <- domainSpec <- sai$domainSpec
+        new_referenceSpec <- referenceSpec <- sai$referenceSpec
         outliers <- estimationSpec$regarima$regression$outliers
-        outliers_domain <- domainSpec$regarima$regression$outliers
-        outliers_name_domain <- do.call(
-            lapply(X = outliers_domain, FUN = function(outlier) {
+        outliers_reference <- referenceSpec$regarima$regression$outliers
+        outliers_name_reference <- do.call(
+            lapply(X = outliers_reference, FUN = function(outlier) {
                 paste0(outlier$code, " (", outlier$pos, ")")
             }),
             what = c
@@ -122,14 +123,14 @@ remove_non_significative_outliers <- function(
                     type = outlier$code,
                     date = outlier$pos
                 )
-                if (outlier_name %in% outliers_name_domain) {
-                    new_domainSpec <- rjd3toolkit::remove_outlier(
-                        new_domainSpec,
+                if (outlier_name %in% outliers_name_reference) {
+                    new_referenceSpec <- rjd3toolkit::remove_outlier(
+                        new_referenceSpec,
                         type = outlier$code,
                         date = outlier$pos
                     )
                     if (verbose) {
-                        cat("L'outlier est dans la domainSpec.\n")
+                        cat("L'outlier est dans la referenceSpec.\n")
                     }
                 }
                 outliers_to_remove <- c(outlier_name, outliers_to_remove)
@@ -138,18 +139,24 @@ remove_non_significative_outliers <- function(
         if (estimation) {
             rjd3workspace::set_specification(jsap, id_sai, new_estimationSpec)
         }
-        if (domain) {
-            rjd3workspace::set_domain_specification(
+        if (reference) {
+            rjd3workspace::set_reference_specification(
                 jsap,
                 id_sai,
-                new_domainSpec
+                new_referenceSpec
             )
         }
         rjd3workspace::set_name(jsap, idx = id_sai, name = series_name)
-        outliers_table <- rbind(
-            outliers_table,
-            data.frame(series = series_name, name = outliers_to_remove)
-        )
+
+        if (length(outliers_to_remove) > 0L) {
+            outliers_table <- rbind(
+                outliers_table,
+                data.frame(
+                    series = series_name,
+                    name = outliers_to_remove
+                )
+            )
+        }
     }
     if (verbose) {
         cat("\U1F4BE Saving WS file\n")
@@ -185,7 +192,7 @@ remove_non_significative_outliers <- function(
 #'  object).
 #'
 #' @export
-#' @examplesIf rjd3toolkit::get_java_version() >= rjd3toolkit::minimal_java_version
+#' @examplesIf rjd3jars::check_java_version(silent = TRUE)
 #'
 #' library("rjd3toolkit")
 #' library("rjd3x13")

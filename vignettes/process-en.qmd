@@ -1,0 +1,176 @@
+---
+title: "Setup a production chain with JDemetra+"
+vignette: >
+  %\VignetteIndexEntry{Production processus (EN)}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: '#>'
+---
+
+```{r}
+#| label: setup
+#| eval: true
+#| echo: false
+
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    echo = TRUE,
+    eval = rjd3jars::check_java_version(silent = TRUE),
+    comment = "#>"
+)
+```
+
+
+```{r}
+#| label: setup-rjd3production
+library("rjd3production")
+```
+
+The {rjd3production} package is useful for setting up a production pipeline for seasonally adjusted time series.
+
+Before creating our production pipeline, we need to set up our working environment – our project. The `init_env()` function creates the following structure:
+
+- a `data/` folder: our raw data
+- a `Workspaces/` folder: our workspaces
+- an `output/` folder: the output time series, tables and graphs
+- a `specs/` folder: workspace-specific specifications (calendar regressors, outliers, etc.)
+- a `BQ/` folder: quality reports and decision files
+- a DESCRIPTION file to manage our project’s dependencies
+- a `.lintr` file for static code analysis (formatting best practices)
+- a README.md file to explain our project
+- a Git project structure
+
+```{r}
+#| echo: true
+#| eval: false
+#| warning: false
+#| label: init-project
+
+path_project <- tempfile(pattern = "my_sa_project")
+init_env(path = path_project)
+```
+
+In this tutorial, we will create a production pipeline using the ABS dataset from the {rjd3toolkit} package.
+The dataset is also available as the file `ABS.csv` at `{r} system.file("extdata", "ABS.csv", package = "rjd3providers")` in the {rjd3providers} package.
+
+```{r}
+#| echo: true
+#| warning: false
+#| label: setup-rjd3toolkit
+
+library("rjd3toolkit")
+path_ABS <- system.file("extdata", "ABS.csv", package = "rjd3providers")
+my_data <- ABS[, seq_len(3L)]
+colnames(my_data) <- substr(colnames(my_data), start = 2L, stop = 12L)
+```
+
+## Selection of calendar regressors
+
+If our time series are sensitive to calendar effects, we can correct for these effects using calendar regressors.
+
+To do this, refer to the `td-selection` vignette for guidance on how to handle these effects and how to generate the `td` table containing our selected custom calendar regressors.
+
+```{r}
+#| echo: true
+#| label: select-td
+
+td <- select_td(my_data)
+```
+
+## Creating a workspace
+
+We will use the {rjd3workspace} package for functions relating to the creation and manipulation of workspaces.
+
+```{r}
+#| echo: true
+#| warning: false
+#| label: setup-rjd3workspace
+
+library("rjd3workspace")
+```
+
+To create a new workspace, you can either create it manually from scratch or from a dataset.
+If you are using external variables, calendar regressors or a custom calendar, don’t forget to place all of these within a modelling context.
+
+At INSEE, we use the `create_insee_context()` function to create our contexts:
+
+```{r}
+#| echo: true
+#| label: create-context
+
+my_context <- create_insee_context(s = my_data[, 1L])
+```
+
+We will use the {rjd3x13} package to create the X13 specs.
+
+```{r}
+#| echo: true
+#| warning: false
+#| label: setup-rjd3x13
+
+library("rjd3x13")
+```
+
+- Create a workspace from scratch
+
+```{r}
+#| echo: true
+#| label: create-ws-from-0
+
+jws <- jws_new(modelling_context = my_context)
+jsap <- jws_sap_new(jws, "Nouveau SAP")
+add_sa_item(jsap = jsap, name = "Première série", x = my_data[, 1L], spec = x13_spec())
+add_sa_item(jsap = jsap, name = "Seconde série", x = my_data[, 2L], spec = x13_spec())
+#... avec autant de commande que de séries
+```
+
+- Create a workspace from a dataset
+
+```{r}
+#| echo: true
+#| label: create-ws-from-data
+
+jws <- create_ws_from_data(my_data)
+set_context(jws, create_insee_context(s = my_data))
+```
+
+If we have any, we need to assign calendar regressors to each series:
+
+```{r}
+#| echo: true
+#| label: assign-td
+
+jws_compute(jws)
+assign_td(td = td, jws = jws)
+```
+
+Don’t forget to update the metadata for our workspace with the path to our raw data:
+
+```{r}
+#| echo: true
+#| label: update-ts-metadata
+
+add_raw_data_path(jws, path_ABS, delimiter = "COMMA")
+```
+
+At last, we can save our workspace!
+
+```{r}
+#| echo: true
+#| eval: false
+#| label: save-workspace
+
+path_ws <- file.path(path_project, "Workspaces", "workspace_travail", "my_ws.xml")
+save_workspace(jws, path_ws, replace = TRUE)
+```
+
+## Call from the cruncher
+
+In an R production pipeline, the cruncher plays a vital role as it enables:
+
+1. Updating the raw data from the data file
+2. Updating the seasonal adjustment model (according to a refresh policy)
+3. Production of outputs

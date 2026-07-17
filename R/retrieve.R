@@ -4,18 +4,18 @@
 #' @export
 retrieve_outliers <- function(
     jws,
-    domain = TRUE,
+    reference = TRUE,
     estimation = FALSE,
-    point = FALSE,
+    result = FALSE,
     verbose = TRUE
 ) {
-    if (domain + point + estimation != 1L) {
+    if (reference + result + estimation != 1L) {
         stop("You have to choose one specification.")
     }
 
     ws <- rjd3workspace::read_workspace(jws, compute = TRUE)
     # Waiting for #108
-    # if (point) {
+    # if (result) {
     #     ws <- rjd3workspace::read_workspace(jws, compute = TRUE)
     # } else {
     #     ws <- rjd3workspace::read_workspace(jws, compute = FALSE)
@@ -46,16 +46,16 @@ retrieve_outliers <- function(
 
         sai <- sap[[id_sai]]
 
-        if (domain) {
-            regression_section <- sai[["domainSpec"]][["regarima"]][[
+        if (reference) {
+            regression_section <- sai[["referenceSpec"]][["regarima"]][[
                 "regression"
             ]]
         } else if (estimation) {
             regression_section <- sai[["estimationSpec"]][["regarima"]][[
                 "regression"
             ]]
-        } else if (point) {
-            regression_section <- sai[["pointSpec"]][["regarima"]][[
+        } else if (result) {
+            regression_section <- sai[["resultSpec"]][["regarima"]][[
                 "regression"
             ]]
         }
@@ -147,18 +147,18 @@ extract_td <- function(spec) {
 #' @export
 retrieve_td <- function(
     jws,
-    domain = TRUE,
+    reference = TRUE,
     estimation = FALSE,
-    point = FALSE,
+    result = FALSE,
     verbose = TRUE
 ) {
-    if (domain + point + estimation != 1L) {
+    if (reference + result + estimation != 1L) {
         stop("You have to choose one specification.")
     }
 
     ws <- rjd3workspace::read_workspace(jws, compute = TRUE)
     # Waiting for #108
-    # if (point) {
+    # if (result) {
     #     ws <- rjd3workspace::read_workspace(jws, compute = TRUE)
     # } else {
     #     ws <- rjd3workspace::read_workspace(jws, compute = FALSE)
@@ -187,12 +187,12 @@ retrieve_td <- function(
 
         sai <- sap[[id_sai]]
 
-        if (domain) {
-            spec <- sai[["domainSpec"]]
+        if (reference) {
+            spec <- sai[["referenceSpec"]]
         } else if (estimation) {
             spec <- sai[["estimationSpec"]]
-        } else if (point) {
-            spec <- sai[["pointSpec"]]
+        } else if (result) {
+            spec <- sai[["resultSpec"]]
         }
 
         td[id_sai, "regs"] <- extract_td(spec)

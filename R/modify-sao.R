@@ -29,7 +29,7 @@
 #'
 #' @export
 #'
-#' @examplesIf rjd3toolkit::get_java_version() >= rjd3toolkit::minimal_java_version
+#' @examplesIf rjd3jars::check_java_version(silent = TRUE)
 #' library("rjd3workspace")
 #' library("rjd3x13")
 #' library("rjd3toolkit")
@@ -101,7 +101,7 @@ make_ws_crunchable <- function(jws, verbose = TRUE) {
 #' A JDemetra+ workspace object (Java pointer) containing one SA-Processing with
 #' one SA-Item per column of `x`.
 #'
-#' @examplesIf rjd3toolkit::get_java_version() >= rjd3toolkit::minimal_java_version
+#' @examplesIf rjd3jars::check_java_version(silent = TRUE)
 #' library("rjd3toolkit")
 #'
 #' # Create workspace
@@ -149,7 +149,7 @@ create_ws_from_data <- function(x, spec = rjd3x13::x13_spec()) {
 #'
 #' @returns The modified \code{jws} object invisibly.
 #'
-#' @examplesIf rjd3toolkit::get_java_version() >= rjd3toolkit::minimal_java_version
+#' @examplesIf rjd3jars::check_java_version(silent = TRUE)
 #'
 #' library("rjd3workspace")
 #' library("rjd3x13")

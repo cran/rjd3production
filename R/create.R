@@ -29,7 +29,7 @@
 #' `REG2`, …, `REG6`, with or without LY).
 #' - `create_insee_context()` returns a `modelling_context` object.
 #'
-#' @examplesIf rjd3toolkit::get_java_version() >= rjd3toolkit::minimal_java_version
+#' @examplesIf rjd3jars::check_java_version(silent = TRUE)
 #' # 1. Create the French calendar
 #' cal <- create_french_calendar()
 #' cal
@@ -56,20 +56,31 @@ NULL
 create_french_calendar <- function() {
     cal_FR <- rjd3toolkit::national_calendar(
         days = list(
-            Bastille_day = rjd3toolkit::fixed_day(7L, 14L), # Bastille Day
+            # Bastille Day
+            Bastille_day = rjd3toolkit::fixed_day(7L, 14L),
+            # Victoire 2nd guerre mondiale
             Victory_day = rjd3toolkit::fixed_day(
                 5L,
                 8L,
                 validity = list(start = "1982-05-08")
-            ), # Victoire 2nd guerre mondiale
-            NEWYEAR = rjd3toolkit::special_day("NEWYEAR"), # Nouvelle année
-            CHRISTMAS = rjd3toolkit::special_day("CHRISTMAS"), # Noël
-            MAYDAY = rjd3toolkit::special_day("MAYDAY"), # 1er mai
-            EASTERMONDAY = rjd3toolkit::special_day("EASTERMONDAY"), # Lundi de Pâques
-            ASCENSION = rjd3toolkit::special_day("ASCENSION"), # attention +39 et pas 40 jeudi ascension
-            WHITMONDAY = rjd3toolkit::special_day("WHITMONDAY"), # Lundi de Pentecôte (1/2 en 2005 a verif)
-            ASSUMPTION = rjd3toolkit::special_day("ASSUMPTION"), # Assomption
-            ALLSAINTSDAY = rjd3toolkit::special_day("ALLSAINTSDAY"), # Toussaint
+            ),
+            # Nouvelle année
+            NEWYEAR = rjd3toolkit::special_day("NEWYEAR"),
+            # Noël
+            CHRISTMAS = rjd3toolkit::special_day("CHRISTMAS"),
+            # 1er mai
+            MAYDAY = rjd3toolkit::special_day("MAYDAY"),
+            # Lundi de Pâques
+            EASTERMONDAY = rjd3toolkit::special_day("EASTERMONDAY"),
+            # attention +39 et pas 40 jeudi ascension
+            ASCENSION = rjd3toolkit::special_day("ASCENSION"),
+            # Lundi de Pentecôte (1/2 en 2005 a verif)
+            WHITMONDAY = rjd3toolkit::special_day("WHITMONDAY"),
+            # Assomption
+            ASSUMPTION = rjd3toolkit::special_day("ASSUMPTION"),
+            # Toussaint
+            ALLSAINTSDAY = rjd3toolkit::special_day("ALLSAINTSDAY"),
+            # Armistice
             ARMISTICE = rjd3toolkit::special_day("ARMISTICE")
         )
     )
@@ -244,7 +255,7 @@ create_insee_context <- function(
 #'
 #' @returns A list of named X13 specifications (TD and variants).
 #'
-#' @examplesIf rjd3toolkit::get_java_version() >= rjd3toolkit::minimal_java_version
+#' @examplesIf rjd3jars::check_java_version(silent = TRUE)
 #' my_context <- create_insee_context()
 #' create_specs_set(context = my_context)
 #'

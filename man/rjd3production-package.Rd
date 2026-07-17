@@ -6,17 +6,23 @@
 \alias{rjd3production-package}
 \title{rjd3production: Prepare for Production of Seasonal Adjustment with 'JDemetra+'}
 \description{
-A comprehensive tool for setting up CVS-CJO data pipelines using 'JDemetra+' (version 3) and 'rjdverse'. This includes setting up a new working environment, creating and selecting calendar regressors, managing specifications (CJO and outliers) at the workspace level, making a workspace crunchable, removing insignificant outliers, and comparing workspaces.
+A comprehensive tool for setting up seasonal data pipelines using 'JDemetra+' (version 3) and 'rjdverse'. This includes setting up a new working environment, creating and selecting calendar regressors, managing specifications (trading-days regressors and outliers) at the workspace level, making a workspace usable by the 'cruncher', removing insignificant outliers, and comparing workspaces.
 }
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://github.com/InseeFr/rjd3production}
   \item \url{https://inseefr.github.io/rjd3production/}
 }
 
 }
 \author{
 \strong{Maintainer}: Tanguy Barthelemy \email{tanguy.barthelemy@insee.fr} [artist]
+
+Authors:
+\itemize{
+  \item Tanguy Barthelemy \email{tanguy.barthelemy@insee.fr} [artist]
+}
 
 }
 \keyword{internal}

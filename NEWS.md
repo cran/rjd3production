@@ -8,6 +8,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+* The domain spec has been renamed in reference spec.
+* The `domain` argument from `remove_non_significant_outliers()`, `retrieve_outliers()`, `retrieve_td()` have been renamed in `reference`.
+* The point spec has been renamed in result spec.
+* The `point` argument from `retrieve_outliers()`, `retrieve_td()` have been renamed in `result`.
+
+### Fixed
+
+* The function `setwd()` has been moved in `init_env()` to fix a bug when setting working directory
+
+### Deprecated
+
+* The function `remove_non_significative_outliers()` is now deprecated in favour of `remove_non_significant_outliers()`. [#78](https://github.com/InseeFr/rjd3production/issues/78)
+
+
+## [1.1.0] - 2026-04-22
+
 ### Added
 
 * New argument `verbose` to display some information while computing
@@ -44,5 +62,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 * New function to choose calendar regressors adapted to series
 * New function to create calendar regressors, french calendar, specification with regressors
 
-[Unreleased]: https://github.com/InseeFr/rjd3production/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/InseeFr/rjd3production/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/InseeFr/rjd3production/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/InseeFr/rjd3production/releases/tag/v1.0.0

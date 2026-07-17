@@ -2,13 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Selection of calendar td regressors</title>
+<title>Selection des régresseurs de calendriers</title>
 <style>
+
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -206,7 +207,7 @@ text-decoration: underline; }
 
 
 <header id="title-block-header">
-<h1 class="title">Selection of calendar td regressors</h1>
+<h1 class="title">Selection des régresseurs de calendriers</h1>
 
 </header>
 
@@ -214,8 +215,8 @@ text-decoration: underline; }
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;rjd3production&quot;</span>)</span></code></pre></div>
 </div>
-<h3 id="regressor-selection">Regressor selection</h3>
-<p>To select a set of regressors, use the <code>select_td()</code> function:</p>
+<h3 id="sélection-des-régresseurs">Sélection des régresseurs</h3>
+<p>Pour sélectionner un jeu de régresseurs de calendrier, on utilise la fonction <code>select_td()</code> :</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;rjd3toolkit&quot;</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
@@ -272,27 +273,27 @@ text-decoration: underline; }
 <span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 X0.2.08.10.M REG6</span></span>
 <span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 X0.2.07.10.M REG6</span></span></code></pre></div>
 </div>
-<h3 id="importexport">Import/Export</h3>
-<p>Once the regressors have been selected, you can export the table in <code>.yaml</code> format and reimport it later:</p>
+<h3 id="import-export">Import / Export</h3>
+<p>Une fois les régresseurs sélectionnées, vous pouvez exporter le tableau au format <code>.yaml</code> et le réimporter ultérieurement :</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>path_td <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">pattern =</span> <span class="st">&quot;td-table&quot;</span>, <span class="at">fileext =</span> <span class="st">&quot;.yaml&quot;</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">export_td</span>(td_table, path_td)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The td table will be written at  /tmp/Rtmpm1wm7K/td-table7d8b62e567de.yaml</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The td table will be written at  /tmp/RtmpBcyAN3/td-table984d4a34598e.yaml</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>td_table2 <span class="ot">&lt;-</span> <span class="fu">import_td</span>(<span class="at">path =</span> path_td)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The td table will be read at  /tmp/Rtmpm1wm7K/td-table7d8b62e567de.yaml</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The td table will be read at  /tmp/RtmpBcyAN3/td-table984d4a34598e.yaml</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>waldo<span class="sc">::</span><span class="fu">compare</span>(td_table, td_table2)</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✔ No differences</span></span></code></pre></div>
 </div>
-<h3 id="assignment">Assignment</h3>
-<p>Finally, to assign calendar regressors to a workspace, you can use the <code>assign_td()</code> function:</p>
+<h3 id="assignation">Assignation</h3>
+<p>Enfin, pour affecter des régresseurs de calendrier à un workspace, vous pouvez utiliser la fonction <code>assign_td()</code> :</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;rjd3workspace&quot;</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>my_ws <span class="ot">&lt;-</span> <span class="fu">jws_open</span>(<span class="st">&quot;my_workspace&quot;</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">assign_td</span>(td_table, my_ws)</span></code></pre></div>
 </div>
-<h3 id="advanced-selection">Advanced selection</h3>
-<p>By default, the regressors proposed are those used by INSEE (and in the SSP). To use custom regressor sets, simply create a modelling context](https://rjdverse.github.io/rjd3toolkit/reference/modelling_context.html) containing as many variables as you want regressor sets and one regressor set per variable.</p>
-<p>For example, for the INSEE regressor sets, here is the structure of the corresponding modelling context:</p>
+<h3 id="sélection-avancée">Sélection avancée</h3>
+<p>Par défaut, les régresseurs proposés sont ceux utilisés par l’INSEE (et dans le SSP). Pour utiliser des ensembles de régresseurs personnalisés, il suffit de créer un <a href="https://rjdverse.github.io/rjd3toolkit/reference/modelling_context.html">modelling context</a> contenant autant de variables qu’il y a de jeux de régresseurs et un jeu de régresseurs par variable.</p>
+<p>Par exemple, pour les jeux de régresseurs de l’INSEE, voici la structure du modelling context correspondant :</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(<span class="fu">create_insee_context</span>(), <span class="at">max.level =</span> <span class="dv">2</span>L)</span>
@@ -313,13 +314,13 @@ text-decoration: underline; }
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ REG5_LY:List of 6</span></span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ REG6_LY:List of 7</span></span></code></pre></div>
 </div>
-<p>Let’s imagine that I only want to test three types of sets:</p>
+<p>Imaginons que je souhaite tester uniquement trois types d’ensembles :</p>
 <ul>
-<li>a first regressor set (<code>TD2_TB</code>) containing two regressors: Thursday, week (and weekend in contrast)</li>
-<li>a second set (<code>TD3_TB</code>) containing three regressors: Thursday, week (and weekend in contrast) and leap-year regressor</li>
-<li>a third set (<code>TD6_TB</code>) that differentiates between all days of the week</li>
+<li>un premier ensemble de régresseurs (<code>TD2_TB</code>) contenant deux régresseurs : le jeudi, la semaine (et le week-end en contraste)</li>
+<li>un deuxième ensemble (<code>TD3_TB</code>) contenant trois régresseurs : jeudi, semaine (et week-end en contraste) et le régresseur leap-year</li>
+<li>un troisième ensemble (<code>TD6_TB</code>) qui distingue tous les jours de la semaine</li>
 </ul>
-<p>We then create our sets of regressors and create the modelling context:</p>
+<p>Nous créons ensuite nos jeux de régresseurs et définissons le modelling context :</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>series_example <span class="ot">&lt;-</span> ABS[, <span class="dv">1</span>L]</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -349,7 +350,7 @@ text-decoration: underline; }
 <span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>my_context <span class="ot">&lt;-</span> <span class="fu">modelling_context</span>(<span class="at">variables =</span> my_regressors_sets)</span></code></pre></div>
 </div>
-<p>We can now use our context to select the calendar regressors:</p>
+<p>Nous pouvons désormais utiliser notre contexte pour sélectionner les régresseurs de calendrier pour chaque séries :</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>my_td_table <span class="ot">&lt;-</span> <span class="fu">select_td</span>(ABS[, <span class="fu">seq_len</span>(<span class="dv">3</span>L)], <span class="at">context =</span> my_context)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>

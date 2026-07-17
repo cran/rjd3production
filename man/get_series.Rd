@@ -36,11 +36,11 @@ Extracts all available time series (pre-adjustment, decomposition, and final)
 from a seasonal adjustment item (\code{jsai}) inside a JDemetra+ workspace.
 }
 \details{
-\code{x} can be a Java SAI object, typically obtained via \code{\link[rjd3workspace:jws_sap]{rjd3workspace::jsap_sai()}} after
-opening and computing a workspace with \code{\link[rjd3workspace:jws_open]{rjd3workspace::jws_open()}} and \code{\link[rjd3workspace:jws_compute]{rjd3workspace::jws_compute()}}.
+\code{x} can be a Java SAI object, typically obtained via \code{\link[rjd3workspace:jsap_sai]{jsap_sai()}} after
+opening and computing a workspace with \code{\link[rjd3workspace:jws_open]{jws_open()}} and \code{\link[rjd3workspace:jws_compute]{jws_compute()}}.
 }
 \examples{
-\dontshow{if (rjd3toolkit::get_java_version() >= rjd3toolkit::minimal_java_version) withAutoprint(\{ # examplesIf}
+\dontshow{if (rjd3jars::check_java_version(silent = TRUE)) withAutoprint(\{ # examplesIf}
 
 library("rjd3toolkit")
 library("rjd3workspace")

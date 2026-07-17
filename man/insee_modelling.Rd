@@ -75,7 +75,7 @@ that can be used directly with \code{rjd3toolkit}.
 }
 }
 \examples{
-\dontshow{if (rjd3toolkit::get_java_version() >= rjd3toolkit::minimal_java_version) withAutoprint(\{ # examplesIf}
+\dontshow{if (rjd3jars::check_java_version(silent = TRUE)) withAutoprint(\{ # examplesIf}
 # 1. Create the French calendar
 cal <- create_french_calendar()
 cal

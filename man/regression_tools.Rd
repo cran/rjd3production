@@ -27,17 +27,17 @@ import_td(path, verbose = TRUE)
 
 retrieve_outliers(
   jws,
-  domain = TRUE,
+  reference = TRUE,
   estimation = FALSE,
-  point = FALSE,
+  result = FALSE,
   verbose = TRUE
 )
 
 retrieve_td(
   jws,
-  domain = TRUE,
+  reference = TRUE,
   estimation = FALSE,
-  point = FALSE,
+  result = FALSE,
   verbose = TRUE
 )
 }
@@ -57,14 +57,14 @@ of this argument.}
 
 \item{path}{\link{character} Path to a YAML file to read or write a table.}
 
-\item{domain}{Boolean indicating if outliers should be extracted from
-the domain specification.}
+\item{reference}{Boolean indicating if outliers should be extracted from
+the reference specification.}
 
 \item{estimation}{Boolean indicating if outliers should be extracted
 from the estimation specification.}
 
-\item{point}{Boolean indicating if outliers should be extracted
-from the point specification.}
+\item{result}{Boolean indicating if outliers should be extracted
+from the result specification.}
 }
 \value{
 \itemize{
@@ -140,12 +140,12 @@ The assignment functions (\code{assign_XXX()}) modify the \strong{first SA-Proce
 of the workspace.
 
 Currently, regression information can be extracted (\code{retrieve_XXX()}) from
-the point, estimation or domainSpec, while the assignment step
-(\code{assign_XXX()}) is performed in both the domainSpec and the estimationSpec.
+the resultSpec, estimationSpec or referenceSpec, while the assignment step
+(\code{assign_XXX()}) is performed in both the referenceSpec and the estimationSpec.
 }
 
 \examples{
-\dontshow{if (rjd3toolkit::get_java_version() >= rjd3toolkit::minimal_java_version) withAutoprint(\{ # examplesIf}
+\dontshow{if (rjd3jars::check_java_version(silent = TRUE)) withAutoprint(\{ # examplesIf}
 
 library("rjd3workspace")
 library("rjd3toolkit")
@@ -157,7 +157,7 @@ set_context(jws, create_insee_context(start = c(2015L, 1L)))
 ## Outliers
 
 # Read all the outliers from a workspace
-outs <- retrieve_outliers(jws, point = TRUE, domain = FALSE)
+outs <- retrieve_outliers(jws, result = TRUE, reference = FALSE)
 
 # Export outliers
 path_outs <- tempfile(pattern = "outliers-table", fileext = ".yaml")

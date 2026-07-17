@@ -36,7 +36,7 @@ merge_contexts <- function(context1 = NULL, context2 = NULL, verbose = TRUE) {
 }
 
 #' @importFrom rjd3workspace jws_sap sap_sai_count jsap_sai sai_name read_sai
-#' @importFrom rjd3workspace set_specification set_domain_specification set_name
+#' @importFrom rjd3workspace set_specification set_reference_specification set_name
 #' @importFrom rjd3toolkit add_outlier
 #' @family regression tools
 #' @rdname regression_tools
@@ -66,10 +66,10 @@ assign_outliers <- function(jws, outliers, verbose = TRUE) {
             # Création de la spec
             sai <- rjd3workspace::read_sai(jsai)
             new_estimationSpec <- estimationSpec <- sai$estimationSpec
-            new_domainSpec <- domainSpec <- sai$domainSpec
+            new_referenceSpec <- referenceSpec <- sai$referenceSpec
 
-            new_domainSpec <- rjd3toolkit::add_outlier(
-                x = domainSpec,
+            new_referenceSpec <- rjd3toolkit::add_outlier(
+                x = referenceSpec,
                 type = outliers_series$type,
                 date = outliers_series$date
             )
@@ -84,10 +84,10 @@ assign_outliers <- function(jws, outliers, verbose = TRUE) {
                 idx = id_sai,
                 spec = new_estimationSpec
             )
-            rjd3workspace::set_domain_specification(
+            rjd3workspace::set_reference_specification(
                 jsap = jsap,
                 idx = id_sai,
-                spec = new_domainSpec
+                spec = new_referenceSpec
             )
             rjd3workspace::set_name(jsap, idx = id_sai, name = series_name)
         }
@@ -96,7 +96,7 @@ assign_outliers <- function(jws, outliers, verbose = TRUE) {
 }
 
 #' @importFrom rjd3workspace jws_sap sap_sai_count jsap_sai sai_name read_sai
-#' @importFrom rjd3workspace set_specification set_domain_specification set_name
+#' @importFrom rjd3workspace set_specification set_reference_specification set_name
 #' @importFrom rjd3workspace get_context
 #' @importFrom rjd3toolkit set_tradingdays
 #' @family regression tools
@@ -139,9 +139,9 @@ assign_td <- function(jws, td, verbose = TRUE) {
 
             sai <- rjd3workspace::read_sai(jsai)
             new_estimationSpec <- estimationSpec <- sai$estimationSpec
-            new_domainSpec <- domainSpec <- sai$domainSpec
-            new_domainSpec <- rjd3toolkit::set_tradingdays(
-                x = domainSpec,
+            new_referenceSpec <- referenceSpec <- sai$referenceSpec
+            new_referenceSpec <- rjd3toolkit::set_tradingdays(
+                x = referenceSpec,
                 option = "UserDefined",
                 uservariable = td_variables,
                 test = "None"
@@ -157,10 +157,10 @@ assign_td <- function(jws, td, verbose = TRUE) {
                 idx = id_sai,
                 spec = new_estimationSpec
             )
-            rjd3workspace::set_domain_specification(
+            rjd3workspace::set_reference_specification(
                 jsap = jsap,
                 idx = id_sai,
-                spec = new_domainSpec
+                spec = new_referenceSpec
             )
             rjd3workspace::set_name(jsap, idx = id_sai, name = series_name)
         }

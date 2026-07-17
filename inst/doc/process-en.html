@@ -2,13 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Mise en place d’une chaîne de production</title>
+<title>Setup a production chain with JDemetra+</title>
 <style>
+
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -206,7 +207,7 @@ text-decoration: underline; }
 
 
 <header id="title-block-header">
-<h1 class="title">Mise en place d’une chaîne de production</h1>
+<h1 class="title">Setup a production chain with JDemetra+</h1>
 
 </header>
 
@@ -214,36 +215,37 @@ text-decoration: underline; }
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;rjd3production&quot;</span>)</span></code></pre></div>
 </div>
-<p>Le package {rjd3production} est utile pour mettre en place une chaîne de production de séries désaisonnalisées.</p>
-<p>Avant de créer notre chaîne de production, il faut créer notre environnement de travail, notre projet. La fonction <code>init_env()</code> créer une structure :</p>
+<p>The {rjd3production} package is useful for setting up a production pipeline for seasonally adjusted time series.</p>
+<p>Before creating our production pipeline, we need to set up our working environment – our project. The <code>init_env()</code> function creates the following structure:</p>
 <ul>
-<li>un dossier <code>data/</code> : nos données brutes</li>
-<li>un dossier <code>Workspaces/</code> : nos workspaces</li>
-<li>un dossier <code>output/</code> : les séries, tableaux et graphiques en sortie</li>
-<li>un dossier <code>specs/</code> : les spécifications propres au workspace (régresseurs de calendrier, outliers…)</li>
-<li>un dossier <code>BQ/</code> : les bilans qualité et fichiers de décisions</li>
-<li>un fichier DESCRIPTION pour gérer les dépendances de notre projet</li>
-<li>un fichier <code>.lintr</code> pour faire l’analyse statique du code (bonnes pratiques de formattage)</li>
-<li>un fichier README.md pour expliquer notre projet</li>
+<li>a <code>data/</code> folder: our raw data</li>
+<li>a <code>Workspaces/</code> folder: our workspaces</li>
+<li>an <code>output/</code> folder: the output time series, tables and graphs</li>
+<li>a <code>specs/</code> folder: workspace-specific specifications (calendar regressors, outliers, etc.)</li>
+<li>a <code>BQ/</code> folder: quality reports and decision files</li>
+<li>a DESCRIPTION file to manage our project’s dependencies</li>
+<li>a <code>.lintr</code> file for static code analysis (formatting best practices)</li>
+<li>a README.md file to explain our project</li>
+<li>a Git project structure</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>path_project <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">pattern =</span> <span class="st">&quot;my_sa_project&quot;</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">init_env</span>(<span class="at">path =</span> path_project)</span></code></pre></div>
 </div>
-<p>Dans cette vignette, nous allons créer une chaîne de production à partir du jeu de données ABS du package {rjd3toolkit}. Le jeu de données se trouve aussi sous la forme du fichier <code>ABS.csv</code> sous /usr/local/lib/R/site-library/rjd3providers/extdata/ABS.csv dans le package {rjd3providers}.</p>
+<p>In this tutorial, we will create a production pipeline using the ABS dataset from the {rjd3toolkit} package. The dataset is also available as the file <code>ABS.csv</code> at /usr/local/lib/R/site-library/rjd3providers/extdata/ABS.csv in the {rjd3providers} package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;rjd3toolkit&quot;</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>path_ABS <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;ABS.csv&quot;</span>, <span class="at">package =</span> <span class="st">&quot;rjd3providers&quot;</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>my_data <span class="ot">&lt;-</span> ABS[, <span class="fu">seq_len</span>(<span class="dv">3</span>L)]</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(my_data) <span class="ot">&lt;-</span> <span class="fu">substr</span>(<span class="fu">colnames</span>(my_data), <span class="at">start =</span> <span class="dv">2</span>L, <span class="at">stop =</span> <span class="dv">11</span>L)</span></code></pre></div>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(my_data) <span class="ot">&lt;-</span> <span class="fu">substr</span>(<span class="fu">colnames</span>(my_data), <span class="at">start =</span> <span class="dv">2</span>L, <span class="at">stop =</span> <span class="dv">12</span>L)</span></code></pre></div>
 </div>
-<h2 id="sélection-des-régresseurs-de-calendrier">Sélection des régresseurs de calendrier</h2>
-<p>Dans le cas où nos séries sont sensibles aux effets de calendrier, on peut corriger ses effets avec des régresseurs de calendrier.</p>
-<p>Pour cela, consulter la vignette <code>td-selection</code> au sujet de la manière de traiter ces effets et comment produire la table <code>td</code> contenant nos régresseurs de calendrier personnalisés selectionnés.</p>
+<h2 id="selection-of-calendar-regressors">Selection of calendar regressors</h2>
+<p>If our time series are sensitive to calendar effects, we can correct for these effects using calendar regressors.</p>
+<p>To do this, refer to the <code>td-selection</code> vignette for guidance on how to handle these effects and how to generate the <code>td</code> table containing our selected custom calendar regressors.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>td <span class="ot">&lt;-</span> <span class="fu">select_td</span>(my_data)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Série 0.2.09.10. en cours... 1/3 </span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Série 0.2.09.10.M en cours... 1/3 </span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing spec No_TD ...Done !</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing spec REG1 ...Done !</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing spec REG2 ...Done !</span></span>
@@ -257,7 +259,7 @@ text-decoration: underline; }
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing spec REG5_LY ...Done !</span></span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing spec REG6_LY ...Done !</span></span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Série 0.2.08.10. en cours... 2/3 </span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Série 0.2.08.10.M en cours... 2/3 </span></span>
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing spec No_TD ...Done !</span></span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing spec REG1 ...Done !</span></span>
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing spec REG2 ...Done !</span></span>
@@ -271,7 +273,7 @@ text-decoration: underline; }
 <span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing spec REG5_LY ...Done !</span></span>
 <span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing spec REG6_LY ...Done !</span></span>
 <span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Série 0.2.07.10. en cours... 3/3 </span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Série 0.2.07.10.M en cours... 3/3 </span></span>
 <span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing spec No_TD ...Done !</span></span>
 <span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing spec REG1 ...Done !</span></span>
 <span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing spec REG2 ...Done !</span></span>
@@ -285,22 +287,22 @@ text-decoration: underline; }
 <span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing spec REG5_LY ...Done !</span></span>
 <span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing spec REG6_LY ...Done !</span></span></code></pre></div>
 </div>
-<h2 id="création-dun-workspace">Création d’un workspace</h2>
-<p>Nous utiliserons le package {rjd3workspace} pour les fonctions de création et manipulation des workspaces.</p>
+<h2 id="creating-a-workspace">Creating a workspace</h2>
+<p>We will use the {rjd3workspace} package for functions relating to the creation and manipulation of workspaces.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;rjd3workspace&quot;</span>)</span></code></pre></div>
 </div>
-<p>Pour créer un nouveau worspace, vous avez le choix entre le créer à la main depuis 0 ou à partir d’un jeu de données. Si vous utilisez des variables externes, des régresseurs de calendrier ou un calendrier personnalisé, il ne faut pas oublier de mettre tout cela dans un modelling context.</p>
-<p>A l’Insee, nous utilisons la fonction <code>create_insee_context()</code> pour nous créer nos context:</p>
+<p>To create a new workspace, you can either create it manually from scratch or from a dataset. If you are using external variables, calendar regressors or a custom calendar, don’t forget to place all of these within a modelling context.</p>
+<p>At INSEE, we use the <code>create_insee_context()</code> function to create our contexts:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>my_context <span class="ot">&lt;-</span> <span class="fu">create_insee_context</span>(<span class="at">s =</span> my_data[, <span class="dv">1</span>L])</span></code></pre></div>
 </div>
-<p>Nous utiliserons le package {rjd3x13} pour créer les specs X13.</p>
+<p>We will use the {rjd3x13} package to create the X13 specs.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;rjd3x13&quot;</span>)</span></code></pre></div>
 </div>
 <ul>
-<li>Créer un workspace à partir de 0</li>
+<li>Create a workspace from scratch</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>jws <span class="ot">&lt;-</span> <span class="fu">jws_new</span>(<span class="at">modelling_context =</span> my_context)</span>
@@ -310,32 +312,36 @@ text-decoration: underline; }
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#... avec autant de commande que de séries</span></span></code></pre></div>
 </div>
 <ul>
-<li>Créer un workspace à partir d’un dataset</li>
+<li>Create a workspace from a dataset</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>jws <span class="ot">&lt;-</span> <span class="fu">create_ws_from_data</span>(my_data)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set_context</span>(jws, <span class="fu">create_insee_context</span>(<span class="at">start =</span> <span class="fu">c</span>(<span class="dv">2015</span>L, <span class="dv">1</span>L)))</span></code></pre></div>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set_context</span>(jws, <span class="fu">create_insee_context</span>(<span class="at">s =</span> my_data))</span></code></pre></div>
 </div>
-<p>Si nous en avons, il faut assigner les régresseurs de calendrier à chaque série :</p>
+<p>If we have any, we need to assign calendar regressors to each series:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">jws_compute</span>(jws)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">assign_td</span>(<span class="at">td =</span> td, <span class="at">jws =</span> jws)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Série 0.2.09.10., 1/3</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Série 0.2.08.10., 2/3</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Série 0.2.07.10., 3/3</span></span></code></pre></div>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Série 0.2.09.10.M, 1/3</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Série 0.2.08.10.M, 2/3</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Série 0.2.07.10.M, 3/3</span></span></code></pre></div>
 </div>
-<p>Il ne faut pas oublier de mettre à jour les metadonnées de notre workspace avec le chemin vers nos données brutes :</p>
+<p>Don’t forget to update the metadata for our workspace with the path to our raw data:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">add_raw_data_path</span>(jws, path_ABS, <span class="at">delimiter =</span> <span class="st">&quot;COMMA&quot;</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: There are no columns called 0.2.09.10. in ABS.csv</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: There are no columns called 0.2.08.10. in ABS.csv</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: There are no columns called 0.2.07.10. in ABS.csv</span></span></code></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">add_raw_data_path</span>(jws, path_ABS, <span class="at">delimiter =</span> <span class="st">&quot;COMMA&quot;</span>)</span></code></pre></div>
 </div>
-<p>Enfin, nous pouvons sauvegarder notre workspace !</p>
+<p>At last, we can save our workspace!</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>path_ws <span class="ot">&lt;-</span> <span class="fu">file.path</span>(path_project, <span class="st">&quot;Workspaces&quot;</span>, <span class="st">&quot;workspace_travail&quot;</span>, <span class="st">&quot;my_ws.xml&quot;</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">save_workspace</span>(jws, path_ws, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 </div>
+<h2 id="call-from-the-cruncher">Call from the cruncher</h2>
+<p>In an R production pipeline, the cruncher plays a vital role as it enables:</p>
+<ol type="1">
+<li>Updating the raw data from the data file</li>
+<li>Updating the seasonal adjustment model (according to a refresh policy)</li>
+<li>Production of outputs</li>
+</ol>
 
 
 

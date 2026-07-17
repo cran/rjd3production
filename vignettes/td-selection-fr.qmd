@@ -1,0 +1,138 @@
+---
+title: "Selection des régresseurs de calendriers"
+vignette: >
+  %\VignetteIndexEntry{Selection des régresseurs de calendriers}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+  knitr:
+  opts_chunk:
+    collapse: true
+    comment: '#>'
+---
+
+```{r}
+#| label: setup
+#| eval: true
+#| echo: false
+
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    echo = TRUE,
+    eval = rjd3jars::check_java_version(silent = TRUE),
+    comment = "#>"
+)
+```
+
+```{r}
+#| echo: true
+#| warning: false
+#| label: setup-rjd3production
+
+library("rjd3production")
+```
+
+### Sélection des régresseurs
+
+Pour sélectionner un jeu de régresseurs de calendrier, on utilise la fonction `select_td()` :
+
+```{r}
+#| echo: true
+#| label: "select-td"
+
+library("rjd3toolkit")
+td_table <- select_td(ABS[, seq_len(3L)])
+print(td_table)
+```
+
+### Import / Export
+
+Une fois les régresseurs sélectionnées, vous pouvez exporter le tableau au format `.yaml` et le réimporter ultérieurement :
+
+```{r}
+#| echo: true
+#| label: "io-td"
+
+path_td <- tempfile(pattern = "td-table", fileext = ".yaml")
+export_td(td_table, path_td)
+td_table2 <- import_td(path = path_td)
+waldo::compare(td_table, td_table2)
+```
+
+### Assignation
+
+Enfin, pour affecter des régresseurs de calendrier à un workspace, vous pouvez utiliser la fonction `assign_td()` :
+
+```{r}
+#| echo: true
+#| eval: false
+#| label: "assign-td"
+
+library("rjd3workspace")
+my_ws <- jws_open("my_workspace")
+assign_td(td_table, my_ws)
+```
+
+### Sélection avancée
+
+Par défaut, les régresseurs proposés sont ceux utilisés par l’INSEE (et dans le SSP). Pour utiliser des ensembles de régresseurs personnalisés, il suffit de créer un [modelling context](https://rjdverse.github.io/rjd3toolkit/reference/modelling_context.html) contenant autant de variables qu'il y a de jeux de régresseurs et un jeu de régresseurs par variable.
+
+Par exemple, pour les jeux de régresseurs de l’INSEE, voici la structure du modelling context correspondant :
+
+```{r}
+#| echo: true
+#| label: "structure-of-context"
+
+
+str(create_insee_context(), max.level = 2L)
+```
+
+Imaginons que je souhaite tester uniquement trois types d'ensembles :
+
+- un premier ensemble de régresseurs (`TD2_TB`) contenant deux régresseurs : le jeudi, la semaine (et le week-end en contraste)
+- un deuxième ensemble (`TD3_TB`) contenant trois régresseurs : jeudi, semaine (et week-end en contraste) et le régresseur leap-year
+- un troisième ensemble (`TD6_TB`) qui distingue tous les jours de la semaine
+
+Nous créons ensuite nos jeux de régresseurs et définissons le modelling context :
+
+```{r}
+#| echo: true
+#| label: "custom-td-creation"
+
+series_example <- ABS[, 1L]
+
+TD2_TB <- calendar_td(
+    s = series_example,
+    groups = c(1L, 1L, 1L, 2L, 1L, 0L, 0L)
+)
+
+TD3_TB <- cbind(
+    calendar_td(
+        s = series_example,
+        groups = c(1L, 1L, 1L, 2L, 1L, 0L, 0L)
+    ),
+    lp_variable(s = series_example)
+)
+colnames(TD3_TB) <- c("group_1", "group_2", "ly")
+
+TD6_TB <- calendar_td(
+    s = series_example,
+    groups = c(1L, 2L, 3L, 4L, 5L, 6L, 0L)
+)
+
+my_regressors_sets <- list(
+    TD2_TB = TD2_TB,
+    TD3_TB = TD3_TB,
+    TD6_TB = TD6_TB
+)
+my_context <- modelling_context(variables = my_regressors_sets)
+```
+
+Nous pouvons désormais utiliser notre contexte pour sélectionner les régresseurs de calendrier pour chaque séries :
+
+```{r}
+#| echo: true
+#| label: "select-td-advanced"
+
+my_td_table <- select_td(ABS[, seq_len(3L)], context = my_context)
+print(my_td_table)
+```

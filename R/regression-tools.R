@@ -16,14 +16,14 @@
 #'
 #' @param path [character] Path to a YAML file to read or write a table.
 #'
-#' @param domain Boolean indicating if outliers should be extracted from
-#' the domain specification.
+#' @param reference Boolean indicating if outliers should be extracted from
+#' the reference specification.
 #'
 #' @param estimation Boolean indicating if outliers should be extracted
 #' from the estimation specification.
 #'
-#' @param point Boolean indicating if outliers should be extracted
-#' from the point specification.
+#' @param result Boolean indicating if outliers should be extracted
+#' from the result specification.
 #'
 #' @details
 #'
@@ -76,8 +76,8 @@
 #' of the workspace.
 #'
 #' Currently, regression information can be extracted (`retrieve_XXX()`) from
-#' the point, estimation or domainSpec, while the assignment step
-#' (`assign_XXX()`) is performed in both the domainSpec and the estimationSpec.
+#' the resultSpec, estimationSpec or referenceSpec, while the assignment step
+#' (`assign_XXX()`) is performed in both the referenceSpec and the estimationSpec.
 #'
 #' @returns
 #'
@@ -89,7 +89,7 @@
 #'   of the YAML file written.
 #' - `assign_XXX()` functions invisibly return the updated workspace `jws`.
 #'
-#' @examplesIf rjd3toolkit::get_java_version() >= rjd3toolkit::minimal_java_version
+#' @examplesIf rjd3jars::check_java_version(silent = TRUE)
 #'
 #' library("rjd3workspace")
 #' library("rjd3toolkit")
@@ -101,7 +101,7 @@
 #' ## Outliers
 #'
 #' # Read all the outliers from a workspace
-#' outs <- retrieve_outliers(jws, point = TRUE, domain = FALSE)
+#' outs <- retrieve_outliers(jws, result = TRUE, reference = FALSE)
 #'
 #' # Export outliers
 #' path_outs <- tempfile(pattern = "outliers-table", fileext = ".yaml")
